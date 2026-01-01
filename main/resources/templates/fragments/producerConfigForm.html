@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="producerConfig">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>ProducerConfig</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+        integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/shards.min.css}" href="../../css/shards.min.css">
+</head>
+
+<body>
+    <!--/*@thymesVar id="ProducerConfig" type="jamsam.shellexample.demo.model.ProducerConfig"*/-->
+    <form th:action="@{/showProducer}" th:object="${ProducerConfig}" th:method="POST">
+        <div class="form-column">
+            <div class="col-md-4 form-group">
+                <label>Producer Name</label>
+                <input type="text" class="form-control" th:field="*{name}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>Topic Prefix</label>
+                <input type="text" class="form-control" th:field="*{topicPrefix}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>Tables white list</label>
+                <input type="text" class="form-control" th:field="*{tableWhitelist}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>Tables</label>
+                <input type="text" class="form-control" th:field="*{tables}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>Mode</label>
+                <input type="text" class="form-control" th:field="*{mode}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>incrementingColumnName</label>
+                <input type="text" class="form-control" th:field="*{incrementingColumnName}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>timestampColumnName</label>
+                <input type="text" class="form-control" th:field="*{timestampColumnName}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>query</label>
+                <input type="text" class="form-control" th:field="*{query}">
+            </div>
+            <div class="col-md-4 form-group">
+                <label>tableTypes</label>
+                <input type="text" class="form-control" th:field="*{tableTypes}">
+            </div>
+            <div>
+                <input type="submit" value="Submit" /> <input type="reset" value="Reset" />
+            </div>
+        </div>
+    </form>
+    </div>
+</body>
+
+</html>
