@@ -1,5 +1,6 @@
 package jamsam.shellexample.demo.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @Component
 public class Topics {
 
-    private String url = "http://localhost:8082/topics";
+    private final String url = "http://localhost:8082/topics";
 
     public Topics() {
     }

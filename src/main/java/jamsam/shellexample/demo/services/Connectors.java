@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Connectors {
 
-    private String url = "http://localhost:8083/connectors";
-    private String curlDelete = "curl -X DELETE localhost:8083/connectors/";
-    private String curlPut = "curl -X PUT localhost:8083/connectors/";
+    private final String url = "http://localhost:8083/connectors";
+    private final String curlDelete = "curl -X DELETE localhost:8083/connectors/";
+    private final String curlPut = "curl -X PUT localhost:8083/connectors/";
 
     private final CommandService commandService;
 
@@ -41,6 +41,7 @@ public class Connectors {
                 return stringList;
             }
         } catch (Exception ex) {
+            log.error("Error fetching connectors", ex);
             stringList.add(ex.getMessage());
             return stringList;
         }

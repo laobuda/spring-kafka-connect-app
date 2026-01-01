@@ -1,5 +1,6 @@
 package jamsam.shellexample.demo.controllers;
 
+import jakarta.validation.Valid;
 import jamsam.shellexample.demo.model.Command;
 import jamsam.shellexample.demo.model.ConsumerConfig;
 import jamsam.shellexample.demo.model.ProducerConfig;
@@ -9,6 +10,7 @@ import jamsam.shellexample.demo.services.Topics;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -57,9 +59,11 @@ public class ShellCommandController {
     }
 
     @PostMapping("/showProducer")
-    public String showProducer(@ModelAttribute ProducerConfig producerConfig, @ModelAttribute Command command,
-            Model model) {
-        model.addAttribute("ProducerConfig", producerConfig);
+    public String showProducer(@Valid @ModelAttribute("ProducerConfig") ProducerConfig producerConfig,
+            BindingResult bindingResult, @ModelAttribute Command command, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "fragments/producerConfigForm.html";
+        }
         service.createAndStartProducer(producerConfig);
         command.setName("Create Source Connector");
         List<String> status = new ArrayList<>();

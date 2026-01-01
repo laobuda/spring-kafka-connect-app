@@ -1,63 +1,24 @@
 package jamsam.shellexample.demo.model;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
+@Data
 @Component
 public class ConsumerConfig {
 
+    @NotBlank(message = "Name is required")
     public String name;
+
+    @NotBlank(message = "Connection URL is required")
     public String connectionUrl;
+
     public String connectionUser;
     public String connectionPassword;
     public String insertMode;
+
+    @NotBlank(message = "Topics are required")
     public String topics;
-
-    public String getTopics() {
-        return topics;
-    }
-
-    public void setTopics(String topics) {
-        this.topics = topics;
-    }
-
-    public String getConnectionUrl() {
-        return connectionUrl;
-    }
-
-    public void setConnectionUrl(String connectionUrl) {
-        this.connectionUrl = connectionUrl;
-    }
-
-    public String getConnectionUser() {
-        return connectionUser;
-    }
-
-    public void setConnectionUser(String connectionUser) {
-        this.connectionUser = connectionUser;
-    }
-
-    public String getConnectionPassword() {
-        return connectionPassword;
-    }
-
-    public void setConnectionPassword(String connectionPassword) {
-        this.connectionPassword = connectionPassword;
-    }
-
-    public String getInsertMode() {
-        return insertMode;
-    }
-
-    public void setInsertMode(String insertMode) {
-        this.insertMode = insertMode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
 }
