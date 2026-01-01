@@ -1,7 +1,6 @@
 package jamsam.shellexample.demo.services;
 
 import jamsam.shellexample.demo.config.SinkConnectorConfig;
-import jamsam.shellexample.demo.config.WebClientConfig;
 import jamsam.shellexample.demo.model.ConsumerConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +8,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -25,35 +22,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public class Consumer {
 
     @Autowired
-    private final WebClientConfig webClient;
+    private ConnectorUtils connectorUtils;
     private final SinkConnectorConfig sinkConnectorConfig;
-
-    private static final String CONNECTOR_BASE_URL = "http://localhost:8083/connectors";
-
-    public boolean checkConnectorExists(String name) {
-
-        String response = webClient.connectorWebClient().get()
-                .uri(CONNECTOR_BASE_URL + "/" + name)
-                .retrieve()
-                .onStatus(status -> status.is4xxClientError(), clientResponse -> Mono.empty())// .error(new ResourceNotFoundException("404 NOT FOUND")))
-                .bodyToMono(String.class)
-                .block();
-
-        return response != null;// && !response.contains("404");
-    }
-
-    public String deleteConnector(ConsumerConfig consumerConfig) {
-        if (checkConnectorExists(consumerConfig.getName())) {
-            webClient.connectorWebClient().delete()
-                    .uri(CONNECTOR_BASE_URL + "/" + consumerConfig.getName())
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-            return "The Sink connector " + consumerConfig.getName() + " has been successfully deleted.";
-        } else {
-            return "No Sink connector with name " + consumerConfig.getName() + " exists.";
-        }
-    }
 
     public String createConsumer(ConsumerConfig consumerConfig) {
         String response;
@@ -103,27 +73,13 @@ public class Consumer {
         log.info("The request >>>>>>>>>>>>>>>>>>>>>>>>>>> {}", request.getBody());
 
         String connectorName = consumerConfig.getName();
-        String connectorUrl = CONNECTOR_BASE_URL + "/" + connectorName;
 
-        if (checkConnectorExists(connectorName)) {
-
+        if (connectorUtils.checkConnectorExists(connectorName)) {
             // Create (replaces) connector
-            response = webClient.connectorWebClient().put()
-                    .uri(connectorUrl+ "/config")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .bodyValue(configJson.toString())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            response = connectorUtils.updateConnector(connectorName, configJson.toString());
             response = "Updated sink connector: " + response;
         } else {
-            response = webClient.connectorWebClient().post()
-                    .uri(CONNECTOR_BASE_URL)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .bodyValue(json)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            response = connectorUtils.createConnector(json);
             log.info("Created connector response: {}", response);
         }
         return response;

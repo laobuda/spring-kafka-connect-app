@@ -1,7 +1,6 @@
 package jamsam.shellexample.demo.services;
 
 import jamsam.shellexample.demo.config.SourceConnectorConfig;
-import jamsam.shellexample.demo.config.WebClientConfig;
 import jamsam.shellexample.demo.model.ProducerConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +8,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -21,37 +17,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RequiredArgsConstructor
 public class Producer {
 
-    private String url = "http://localhost:8083/connectors";
     @Autowired
-    private final WebClientConfig webClient;
+    private ConnectorUtils connectorUtils;
     private final SourceConnectorConfig connectorConfig;
 
-  public boolean checkConnectorExists(String name) {
-
-      String response = webClient.connectorWebClient().get()
-              .uri(url + "/" + name)
-              .retrieve()
-              .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.empty())
-              .bodyToMono(String.class)
-              .block();
-
-      return response != null;
-  }
-
-    public String deleteConnector(ProducerConfig producerConfig) {
-        String result;
-        if (checkConnectorExists(producerConfig.getName())) {
-            webClient.connectorWebClient().delete()
-                    .uri(url + "/" + producerConfig.getName())
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-            result = "The Source connector " + producerConfig.getName() + " has been successfully deleted.";
-        } else {
-            result = "No Source connector with name " + producerConfig.getName() + " exists.";
-        }
-        return result;
-    }
 
     public String createProducer(ProducerConfig producerConfig) {
         String response;
@@ -88,23 +57,11 @@ public class Producer {
 
         log.info("The request >>>>>>>>>>>>>>>>>>>>>>>>>>> {}", request.getBody());
 
-        if (checkConnectorExists(producerConfig.getName())) {
-            response = webClient.connectorWebClient().put()
-                    .uri(url + "/" + producerConfig.getName() + "/config")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(configJson.toString())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+        if (connectorUtils.checkConnectorExists(producerConfig.getName())) {
+            response = connectorUtils.updateConnector(producerConfig.getName(), configJson.toString());
             response = "Updated the source connector " + response;
         } else {
-            response = webClient.connectorWebClient().post()
-                    .uri(url + "/" )
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .bodyValue(json)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            response = connectorUtils.createConnector(json);
             log.info("The response >>>>>>>>>>>>>>>>>>>>>>>>>>> {}", response);
         }
         return response;

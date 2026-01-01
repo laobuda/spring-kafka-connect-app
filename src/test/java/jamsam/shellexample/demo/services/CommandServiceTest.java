@@ -22,6 +22,9 @@ class CommandServiceTest {
     @Mock
     private Consumer consumer;
 
+    @Mock
+    private ConnectorUtils connectorUtils;
+
     @InjectMocks
     private CommandService commandService;
 
