@@ -1,11 +1,8 @@
 package jamsam.shellexample.demo.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +21,9 @@ public class Topics {
         RestTemplate rt = new RestTemplate();
         String topics;
         List<String> result = new ArrayList<>();
-        List<String> stringList  = new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
         try {
-            topics = rt.getForObject(url , String.class);
+            topics = rt.getForObject(url, String.class);
             result = Arrays.asList(topics.split(","));
             stringList = result.stream()
                     .filter(topic -> !topic.contains("\"__confluent.support.metrics\""))
@@ -42,7 +39,7 @@ public class Topics {
             return stringList;
         }
 
-        if(stringList.isEmpty() || stringList.contains("404")){
+        if (stringList.isEmpty() || stringList.contains("404")) {
             stringList.add("Resource does not exist");
             return stringList;
         } else {
